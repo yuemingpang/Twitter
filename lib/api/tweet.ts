@@ -6,6 +6,7 @@ export const listTweets = async () => {
       Authorization: `Bearer ${authToken}`,
     }
   }); //REST API get method
+
   if (res.status == 401) {
     throw new Error("Authorization failed");
   }
@@ -21,6 +22,7 @@ export const getTweet = async (id: string) => {
       Authorization: `Bearer ${authToken}`,
     }
   }); //REST API get method
+
   if (res.status == 401) {
     throw new Error("Authorization failed");
   }
@@ -28,4 +30,23 @@ export const getTweet = async (id: string) => {
     throw new Error("Error fetching the API");
   }
   return await res.json();
-}
+};
+
+export const createTweet = async (data: {content: string}) => {
+  const res = await fetch(`${API_URL}/tweet`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-type': 'application/json',
+    },
+    body: JSON.stringify(data)
+  }); //REST API post method
+
+  if (res.status == 401) {
+    throw new Error("Authorization failed");
+  }
+  if (res.status != 200) {
+    throw new Error("Error creating tweet");
+  }
+  return await res.json();
+};

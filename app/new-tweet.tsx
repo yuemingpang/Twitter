@@ -1,6 +1,8 @@
-import {View, StyleSheet, Image, Text, TextInput, Pressable, SafeAreaView} from 'react-native';
-import { Link, useNavigation, useRouter } from 'expo-router';
+import {View, StyleSheet, Image, Text, TextInput, Pressable, SafeAreaView, ActivityIndicator} from 'react-native';
+import { Link, router, useNavigation, useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createTweet } from '../lib/api/tweet';
 
 const user = {
         id: 'u1',
@@ -13,38 +15,53 @@ const user = {
 
 export default function NewTweet(){
     const [text, setText] = useState("");
-    const action = useRouter();
-    const onTweetPress = () => {
+    const router = useRouter();
+    const queryClient = useQueryClient();
 
-        setText("");
-        action.back();
-    }
+    const {mutateAsync, isLoading, isError, error} = useMutation({
+        mutationFn: createTweet,
+        onSuccess: (data) => {
+            queryClient.setQueriesData(['tweets'], (curTweets) => [data, ...curTweets]);
+        },
+    });
+
+    const onTweetPress = async () => {
+        try {
+            await mutateAsync({content: text});
+            setText("");
+            router.back(); 
+        } catch (e) {
+            console.log('Error:', e.message);
+        }
+    };
 
     return(
         <SafeAreaView style={{flex:1, backgroundColor:'white'}}>
-        <View style={styles.container}>
-            <View style={styles.buttons}>
-                <Link href="../" style={{fontSize:18}}>
-                    Cancel
-                </Link>
-                <Pressable onPress={onTweetPress} style={styles.buttonTweet}>
-                    <Text style={styles.buttonText}>
-                        Tweet
-                    </Text>
-                </Pressable>
-            </View>
+            <View style={styles.container}>
+                <View style={styles.buttons}>
+                    <Link href="../" style={{fontSize:18}}>
+                        Cancel
+                    </Link>
+                    {isLoading && <ActivityIndicator/>}
+                    <Pressable onPress={onTweetPress} style={styles.buttonTweet}>
+                        <Text style={styles.buttonText}>
+                            Tweet
+                        </Text>
+                    </Pressable>
+                </View>
 
-            <View style={styles.input}>
-                <Image src={user.image} style={styles.image}/>
-                <TextInput
-                 value = {text}
-                 onChangeText={setText}
-                 placeholder="What's in your mind?" 
-                 multiline 
-                 numberOfLines={5}
-                 style={{ flex: 1 }}/>
+                <View style={styles.input}>
+                    <Image src={user.image} style={styles.image}/>
+                    <TextInput
+                    value = {text}
+                    onChangeText={setText}
+                    placeholder="What's in your mind?" 
+                    multiline 
+                    numberOfLines={5}
+                    style={{ flex: 1 }}/>
+                </View>
+                {isError && <Text>Error: {error.message}</Text>}
             </View>
-        </View>
         </SafeAreaView>
     )
 }
