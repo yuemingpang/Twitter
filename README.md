@@ -4,10 +4,12 @@ Once you have the prerequisites installed, run the following command in the root
 ```
 npm install
 ```  
-You may need to install React Navigation Drawer and TanStack Query in the root folder as well:  
+You may need to install React Navigation Drawer, TanStack Query, and Expo SecureStore in the root folder as well:  
 ```
 npx expo install react-native-gesture-handler react-native-reanimated
+npx expo install expo-secure-store
 npm i @tanstack/react-query
+
 ```  
 To start the app in the simulator, run the following command in the root folder:  
 ```
