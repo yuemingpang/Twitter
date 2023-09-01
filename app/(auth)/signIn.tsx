@@ -1,6 +1,7 @@
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import { login } from "../../lib/api/auth";
 
 
 const SignIn = () => {
@@ -8,9 +9,12 @@ const SignIn = () => {
     const router = useRouter();
 
     const onSignIn = async () => {
-        //TODO
-
-        router.push({ pathname: '/authenticate', params: {email} });
+        try {
+            await login({email});
+            router.push({ pathname: '/authenticate', params: {email} });
+        } catch (e) {
+            Alert.alert('Error');
+        }
     };
 
     return (

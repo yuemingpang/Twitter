@@ -1,6 +1,7 @@
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-native";
 import React, { useState } from "react";
 import { useSearchParams } from "expo-router";
+import { authenticate } from "../../lib/api/auth";
 
 
 const Authenticate = () => {
@@ -8,7 +9,15 @@ const Authenticate = () => {
     const {email} = useSearchParams();
 
     const onVerify = async () => {
-
+        if (typeof email != 'string'){
+            return;
+        }
+        
+        try {
+            const res = await authenticate({email, emailToken: code})
+        } catch (e) {
+            Alert.alert("Cannot verify your email");
+        }
     }
 
     return (
