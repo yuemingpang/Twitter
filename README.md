@@ -11,6 +11,10 @@ npx expo install expo-secure-store
 npm i @tanstack/react-query
 
 ```  
+Or you can simply install all dependencies by runing the command below:  
+```
+npm i
+```   
 To start the app in the simulator, run the following command in the root folder:  
 ```
 npm start
